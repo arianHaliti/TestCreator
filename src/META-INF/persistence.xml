@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="TestCreator_1.24PU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>BL.StudentAnswerTest</class>
+    <class>BL.Questions</class>
+    <class>BL.Test</class>
+    <class>BL.Programs</class>
+    <class>BL.ProgramsSubjects</class>
+    <class>BL.Cities</class>
+    <class>BL.Addresses</class>
+    <class>BL.Phone</class>
+    <class>BL.Emails</class>
+    <class>BL.Countries</class>
+    <class>BL.Profesors</class>
+    <class>BL.Users</class>
+    <class>BL.Students</class>
+    <class>BL.Subjects</class>
+    <class>BL.Answers</class>
+    <class>BL.StudentAnswers</class>
+    <class>BL.StudentTest</class>
+    <class>BL.ProfesorSubjects</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=TestCreator1"/>
+      <property name="javax.persistence.jdbc.user" value="sa"/>
+      <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+      <property name="javax.persistence.jdbc.password" value="sql123"/>
+    </properties>
+  </persistence-unit>
+</persistence>

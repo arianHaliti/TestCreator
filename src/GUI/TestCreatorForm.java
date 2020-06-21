@@ -1,0 +1,615 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package GUI;
+
+import BL.Profesors;
+import BL.Programs;
+import BL.Subjects;
+import BL.Test;
+import BL.Users;
+import DAL.ProfesorRepository;
+import DAL.Profesor_SubjectRepository;
+import DAL.ProgramRepository;
+import DAL.SubjectsRepository;
+import DAL.TestiException;
+import DAL.TestiRepository;
+import DAL.UserRepository;
+import Model.TestiTableModel;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+/**
+ *
+ * @author XONI
+ */
+public class TestCreatorForm extends javax.swing.JInternalFrame {
+    Profesors p;
+    ArrayList<Subjects>subjectList;
+    ArrayList<Programs>drejtimList;
+    ProgramRepository ppr = new ProgramRepository();
+    UserRepository ur = new UserRepository();
+    ProfesorRepository pr = new ProfesorRepository();
+    Profesor_SubjectRepository  psr = new Profesor_SubjectRepository();
+    SubjectsRepository sr = new SubjectsRepository();
+    TestiRepository testiRepository = new TestiRepository();
+    TestiTableModel testiTableModel = new TestiTableModel();
+    Test t ;
+    
+    /**
+     * Creates new form generateTest1
+     */
+    public TestCreatorForm(Users p) {
+        initComponents();
+        this.p = getProfesor(p);
+        tabelaLoad();
+        
+    }
+    private Profesors getProfesor(Users p){
+       try{
+           return ur.findByFK(p);
+       }catch(Exception e){
+           JOptionPane.showMessageDialog(this, e, "ERROR", WIDTH, frameIcon);
+       }
+       return null;
+    }
+
+    public void emptyObject(){
+        testTable.clearSelection();
+        test_name_field.setText("");
+        test_desc_field.setText("");
+//        points_field.setText("");
+        duration_field.setText("");
+  //      points_field.setText("");
+        drejtimi_combo.setSelectedIndex(0);
+    }
+    
+    
+    private void tabelaLoad(){
+        List<Test> lista = testiRepository.findByProfesor(p);
+        testiTableModel.add(lista);
+        testTable.setModel(testiTableModel);
+        testiTableModel.fireTableDataChanged();
+        tabelaSelectedIndexChange();
+        
+        drejtimi_combo.setModel(new DefaultComboBoxModel(drejtimi().toArray()));
+        subject_combo.setModel(new DefaultComboBoxModel(lenda().toArray()));
+        
+        
+        System.out.println(drejtimi_combo.getItemCount());
+        if(drejtimi_combo.getItemCount()==0){
+            drejtimi_combo.addItem("Nuk keni Drejtim");
+            subject_combo.addItem("Nuk keni Lend");
+        }
+    
+    }
+    
+    private  ArrayList<String> drejtimi(){
+        ArrayList<String> drejt= new ArrayList<>();
+        List <Programs> temp =ppr.findByProfesor(p);
+        drejtimList = new ArrayList<>();
+        for(int i = 0; i<temp.size();i++){
+            drejt.add(temp.get(i).getProgramName());
+            drejtimList.add(temp.get(i));
+        }
+        return  drejt;
+    }
+    private  ArrayList<String> lenda(){
+        ArrayList<String> drejt= new ArrayList<>();
+        List <Subjects> temp =sr.findByProgram((String) drejtimi_combo.getSelectedItem(),p);
+        subjectList = new ArrayList<>();
+        for(int i = 0; i<temp.size();i++){
+            drejt.add(temp.get(i).getSubjectName());
+            subjectList.add(temp.get(i));
+        }
+        return  drejt;
+    }
+    private void tabelaSelectedIndexChange(){
+        final ListSelectionModel rowSM = testTable.getSelectionModel();
+        rowSM.addListSelectionListener(new ListSelectionListener(){
+            @Override
+            public void valueChanged(ListSelectionEvent Ise){
+                if(Ise.getValueIsAdjusting()){
+                    return;
+                }
+                ListSelectionModel rowSM = (ListSelectionModel) Ise.getSource();
+                int selectedIndex = rowSM.getAnchorSelectionIndex();
+                if(selectedIndex > -1){
+                    Test testi = testiTableModel.getTesti(selectedIndex);
+                    
+                    test_name_field.setText(testi.getTestName());
+                    duration_field.setText(testi.getDuration() + "");
+//                    points_field.setText(testi.getPoints()+ "");
+                    edit_btn.setVisible(true);
+                    drejtimi_combo.setSelectedItem(testi.getProgramSubjectID().getProgramID().getProgramName());
+                    subject_combo.setSelectedItem(testi.getProgramSubjectID().getProfesorSubjectID().getSubjectID().getSubjectName());
+                    t=testi;
+                }
+            }
+        });
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel2 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        test_name_field = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        drejtimi_combo = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
+        duration_field = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        test_desc_field = new javax.swing.JTextArea();
+        jLabel12 = new javax.swing.JLabel();
+        save_btn = new javax.swing.JButton();
+        delete_btn = new javax.swing.JButton();
+        cancle_btn = new javax.swing.JButton();
+        edit_btn = new javax.swing.JButton();
+        subject_combo = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        test_desc_field1 = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        testTable = new javax.swing.JTable();
+
+        setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
+        setResizable(true);
+        setTitle("TEST GENERATOR");
+        setMinimumSize(new java.awt.Dimension(1019, 654));
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "GENERATE TEST", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Calibri", 0, 15), new java.awt.Color(102, 102, 102))); // NOI18N
+        jPanel2.setToolTipText("CREATE STUDENTS");
+        jPanel2.setName(""); // NOI18N
+
+        jLabel5.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(51, 51, 51));
+        jLabel5.setText("Kohezgjatja :");
+
+        test_name_field.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        test_name_field.setForeground(new java.awt.Color(51, 51, 51));
+        test_name_field.setMargin(new java.awt.Insets(2, 5, 2, 5));
+        test_name_field.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                test_name_fieldActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(51, 51, 51));
+        jLabel11.setText("Zgjedh Drejtimin :");
+
+        drejtimi_combo.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        drejtimi_combo.setForeground(new java.awt.Color(51, 51, 51));
+        drejtimi_combo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BTI1", "Shkenca Kompjuterike1", "Shkenca Kompjuterike2", "" }));
+        drejtimi_combo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                drejtimi_comboActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(51, 51, 51));
+        jLabel3.setText("Emri i Testit :");
+
+        duration_field.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        duration_field.setForeground(new java.awt.Color(51, 51, 51));
+        duration_field.setMargin(new java.awt.Insets(2, 5, 2, 5));
+        duration_field.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                duration_fieldActionPerformed(evt);
+            }
+        });
+
+        test_desc_field.setColumns(20);
+        test_desc_field.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        test_desc_field.setForeground(new java.awt.Color(51, 51, 51));
+        test_desc_field.setRows(5);
+        jScrollPane1.setViewportView(test_desc_field);
+
+        jLabel12.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(51, 51, 51));
+        jLabel12.setText("Regullat ne Test: ");
+
+        save_btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save.png"))); // NOI18N
+        save_btn.setText("SAVE");
+        save_btn.setIconTextGap(10);
+        save_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                save_btnActionPerformed(evt);
+            }
+        });
+
+        delete_btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/rubbish-bin.png"))); // NOI18N
+        delete_btn.setText("DELETE");
+        delete_btn.setIconTextGap(10);
+        delete_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                delete_btnActionPerformed(evt);
+            }
+        });
+
+        cancle_btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cancel-button.png"))); // NOI18N
+        cancle_btn.setText("CANCEL");
+        cancle_btn.setIconTextGap(10);
+        cancle_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancle_btnActionPerformed(evt);
+            }
+        });
+
+        edit_btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open-book.png"))); // NOI18N
+        edit_btn.setText("EDIT");
+        edit_btn.setIconTextGap(10);
+        edit_btn.setVisible(false);
+        edit_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edit_btnActionPerformed(evt);
+            }
+        });
+
+        subject_combo.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        subject_combo.setForeground(new java.awt.Color(51, 51, 51));
+        subject_combo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                subject_comboActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(51, 51, 51));
+        jLabel6.setText("Zgjedh Lenden :");
+
+        test_desc_field1.setColumns(20);
+        test_desc_field1.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        test_desc_field1.setForeground(new java.awt.Color(51, 51, 51));
+        test_desc_field1.setRows(5);
+        test_desc_field1.setText("Përdorimi i librave, materialeve dhe shënimeve tjera nuk lejohet.\n Biseda me studentët tjerë gjatë kolokfiumit apo \nkopjiminuk lejohet. Mashtrimi apo çfarëdo dhunimi\n tjetër i këtyre rregullave do të rezultojë me Zero pikë.");
+        jScrollPane3.setViewportView(test_desc_field1);
+
+        jLabel1.setText("OR");
+
+        jRadioButton1.setFont(new java.awt.Font("Calibri", 0, 14)); // NOI18N
+        jRadioButton1.setForeground(new java.awt.Color(51, 51, 51));
+        jRadioButton1.setText("Perdor regulla te pergjithshme");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(save_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(delete_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancle_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(edit_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel11)
+                                        .addComponent(drejtimi_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel6)
+                                        .addComponent(subject_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jScrollPane1))
+                            .addComponent(jLabel12))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(test_name_field, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3))
+                                .addGap(5, 5, 5)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(duration_field, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(145, 145, 145))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jRadioButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addGap(12, 12, 12))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(7, 7, 7)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addGap(33, 33, 33))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel6))
+                        .addGap(5, 5, 5)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(drejtimi_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(subject_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(test_name_field, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(duration_field, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(jRadioButton1))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(jLabel1)))
+                .addGap(35, 35, 35)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(delete_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(save_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cancle_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(edit_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10))
+        );
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "TABLE OF TESTS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Calibri", 0, 14), new java.awt.Color(102, 102, 102))); // NOI18N
+
+        testTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(testTable);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(131, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void test_name_fieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_test_name_fieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_test_name_fieldActionPerformed
+
+    private void duration_fieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_duration_fieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_duration_fieldActionPerformed
+
+    private void save_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_btnActionPerformed
+             try{
+            
+            String number ="[0-9]+?";
+            int row = testTable.getSelectedRow();
+            if(test_name_field.getText().trim().equals("")){
+                JOptionPane.showMessageDialog(this, "Ju lutem Shkruani emrin e testit :","Error",JOptionPane.ERROR_MESSAGE);
+            }
+            else if(!test_name_field.getText().matches("^(?!\\d+$)[a-zA-Z\\d\\s]+$")){
+                JOptionPane.showMessageDialog(this, "emri i testit mund te kete vetem shkronja dhe numra ","Error",JOptionPane.ERROR_MESSAGE);
+                
+            }
+            else if(test_name_field.getText().length()>140){
+                JOptionPane.showMessageDialog(this,
+                        "emri i testit eshte shum i gjat ","Error",JOptionPane.ERROR_MESSAGE);
+                
+            }
+            else if(duration_field.getText().equals("")|| !duration_field.getText().matches(number)){
+               JOptionPane.showMessageDialog(this,
+                        duration_field.getText().equals("") ?"Ju lutem shkruani minutat ne test :":
+                        "Minutat duhet te jet numer te plot pozitiv","Error",JOptionPane.ERROR_MESSAGE);
+            }
+            else if(duration_field.getText().length()>6){
+                JOptionPane.showMessageDialog(this,
+                        "Minutat ne test jan shum te lart","Error",JOptionPane.ERROR_MESSAGE);
+                
+            }
+            else if(Integer.parseInt(duration_field.getText())>300){
+                JOptionPane.showMessageDialog(
+                        this,"Minutat jan shum te lart","Error",JOptionPane.ERROR_MESSAGE);
+            }
+//            else if(points_field.getText().equals("") || !points_field.getText().matches(number)){
+//                JOptionPane.showMessageDialog(this,
+//                        points_field.getText().equals("") ?"Ju lutem Shkruani numrin e Pikeve te plota :":
+//                        "Piket e plota  duhet te jet numer","Error",JOptionPane.ERROR_MESSAGE);
+//            }
+            else if(drejtimi_combo.getSelectedItem().equals("Nuk keni Drejtim")){
+                    JOptionPane.showMessageDialog(this,
+                        "Nuk keni ndonje drejtim ","Error",JOptionPane.ERROR_MESSAGE);
+            }
+            else if(test_desc_field.getText().length()>250){    
+             JOptionPane.showMessageDialog(this,
+                        "Description eshte shum i gjat","Error",JOptionPane.ERROR_MESSAGE);
+            }
+             else{
+                if(row == -1){
+                    
+                    
+                    Test testi = new Test();
+                    testi.setTestName(test_name_field.getText());
+                    testi.setNrQuestions(0);
+                    testi.setPoints(0);
+                    testi.setDuration(Integer.parseInt(duration_field.getText()));
+                    testi.setProgramSubjectID(ppr.findByProfesorAndSubject(subjectList.get(subject_combo.getSelectedIndex()),p,drejtimList.get(drejtimi_combo.getSelectedIndex())));
+                    testi.setTestActive(false);
+                    
+                    if(jRadioButton1.isSelected())
+                        testi.setDescriptions(test_desc_field1.getText());
+                    else
+                        testi.setDescriptions(test_desc_field.getText());
+//                    System.out.println(subjectList.get(lendaCombo.getSelectedIndex()));
+//                    System.out.println((ppr.findByProfesorAndSubject(subjectList.get(lendaCombo.getSelectedIndex()),p.getProfesorID())).getProgramSubjectID()+"SSSSSSs");
+                    
+                    testiRepository.create(testi);
+                     int res =JOptionPane.showConfirmDialog(null,
+"Testi u ruajt me sukses ,Deshironi te mbushni Testin e krijuar?",null, JOptionPane.YES_NO_OPTION);
+                    if(res == JOptionPane.YES_OPTION){
+                        t= testi;
+                        edit_btnActionPerformed(evt);
+                    }
+               
+                } else{
+                    Test testi = this.testiTableModel.getTesti(row);
+                    
+                    testi.setTestName(test_name_field.getText());
+                //    testi.setNrQuestions(Integer.parseInt(nr_quest_field.getText()));
+                    testi.setDuration(Integer.parseInt(duration_field.getText()));
+                   // testi.setPoints(Integer.parseInt(points_field.getText()));
+                    if(jRadioButton1.isSelected())
+                        testi.setDescriptions(test_desc_field1.getText());
+                    else
+                        testi.setDescriptions(test_desc_field.getText());
+                    testiRepository.edit(testi);
+                    JOptionPane.showMessageDialog(this, "E dhëna u editua me sukses");
+                    
+                }
+                emptyObject();
+                tabelaLoad();
+            };
+        } catch(TestiException  te){
+            
+           JOptionPane.showMessageDialog(this, te.getMessage()); 
+        }
+
+    }//GEN-LAST:event_save_btnActionPerformed
+
+    private void delete_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_btnActionPerformed
+                try{
+            int row = testTable.getSelectedRow();
+            if(row > -1){
+                Object [] ob = {"Po","Jo"};
+                int i = javax.swing.JOptionPane.showOptionDialog(this, "A dëshironi ta fshini ?", "Fshirja", JOptionPane.OK_OPTION,JOptionPane.QUESTION_MESSAGE, null, ob, ob[1]);
+                if(i==0){
+                    Test t = this.testiTableModel.getTesti(row);
+                    testiRepository.remove(t);
+                    tabelaLoad();
+                    emptyObject();
+                    JOptionPane.showMessageDialog(this, "E dhëna është fshir me sukses !");
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(this,"Nuk keni selektuar asgjë për të fshir !");
+            }
+        }catch(TestiException pe){
+            JOptionPane.showMessageDialog(this, pe.getMessage());
+        }
+
+    }//GEN-LAST:event_delete_btnActionPerformed
+
+    private void edit_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_btnActionPerformed
+        if(testiRepository.findByStudents(t.getTestID()).isEmpty()){
+            TestQuestions tq = new TestQuestions(t);
+            this.getParent().add(tq);
+            tq.show();
+        }else
+            JOptionPane.showMessageDialog(this, "Testi eshte nen perdorim dhe nuk mund te editohet");
+    }//GEN-LAST:event_edit_btnActionPerformed
+
+    private void cancle_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancle_btnActionPerformed
+        emptyObject();
+        edit_btn.setVisible(false);
+
+    }//GEN-LAST:event_cancle_btnActionPerformed
+
+    private void drejtimi_comboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_drejtimi_comboActionPerformed
+            subject_combo.setModel(new DefaultComboBoxModel(lenda().toArray()));
+    
+    }//GEN-LAST:event_drejtimi_comboActionPerformed
+
+    private void subject_comboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subject_comboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_subject_comboActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancle_btn;
+    private javax.swing.JButton delete_btn;
+    private javax.swing.JComboBox<String> drejtimi_combo;
+    private javax.swing.JTextField duration_field;
+    private javax.swing.JButton edit_btn;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JButton save_btn;
+    private javax.swing.JComboBox<String> subject_combo;
+    private javax.swing.JTable testTable;
+    private javax.swing.JTextArea test_desc_field;
+    private javax.swing.JTextArea test_desc_field1;
+    private javax.swing.JTextField test_name_field;
+    // End of variables declaration//GEN-END:variables
+}
